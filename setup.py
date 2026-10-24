@@ -3,8 +3,9 @@ import mysql.connector
 
 conn = mysql.connector.connect(
     host='localhost',
-    user='root',
-    password='123mudar'
+    user='ministore_user',
+    password='admin',
+    database='ministore'
 )
 
 cursor = conn.cursor()
@@ -70,16 +71,6 @@ cursor.execute("""
     )
 """)
 
-cursor.execute("""
-    CREATE USER IF NOT EXISTS 'ministore'@'localhost'
-    IDENTIFIED BY '123mudar'
-""")
-
-cursor.execute("""
-    GRANT ALL PRIVILEGES ON ministore.* TO 'ministore'@'localhost'
-""")
-
-cursor.execute("FLUSH PRIVILEGES")
 
 cursor.close()
 conn.close()

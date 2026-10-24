@@ -20,7 +20,7 @@ def listar():
     finally:
         if cursor: cursor.close()
         if conn: conn.close()
-    return render_template('lista.html', clientes=clientes)
+    return render_template('lista_clientes.html', clientes=clientes)
 
 @clientes_bp.route('/clientes/novo', methods=['GET', 'POST'])
 def novo():
@@ -45,7 +45,7 @@ def novo():
         finally:
             if cursor: cursor.close()
             if conn: conn.close()
-    return render_template('form.html', cliente=None)
+    return render_template('form_cliente.html', cliente=None)
 
 @clientes_bp.route('/clientes/<int:id>/editar', methods=['GET', 'POST'])
 def editar(id):
@@ -83,7 +83,7 @@ def editar(id):
         if cursor: cursor.close()
         if conn: conn.close()
 
-    return render_template('form.html', cliente=cliente)
+    return render_template('form_cliente.html', cliente=cliente)
 
 @clientes_bp.route('/clientes/<int:id>/excluir', methods=['POST'])
 def excluir(id):

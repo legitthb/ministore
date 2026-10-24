@@ -1,0 +1,47 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>
+        {{ 'Editar Categoria' if categoria else 'Nova Categoria' }}
+    </h2>
+
+    <form method="POST">
+        <div class="mb-3">
+            <label for="nome" class="form-label">Nome</label>
+
+            <input
+                type="text"
+                class="form-control"
+                id="nome"
+                name="nome"
+                value="{{ categoria.nome if categoria else '' }}"
+                required
+            >
+        </div>
+
+        <div class="mb-3">
+            <label for="descricao" class="form-label">
+                Descrição
+            </label>
+
+            <textarea
+                class="form-control"
+                id="descricao"
+                name="descricao"
+                rows="4"
+            >{{ categoria.descricao if categoria else '' }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-success">
+            Salvar
+        </button>
+
+        <a href="{{ url_for('categorias.listar') }}"
+           class="btn btn-secondary">
+            Cancelar
+        </a>
+    </form>
+</div>
+{% endblock %}
