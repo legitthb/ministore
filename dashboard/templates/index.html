@@ -4,25 +4,42 @@
 
 {% block content %}
 <div class="page-header">
-    <h1>Dashboard</h1>
+    <div>
+        <h1>Dashboard</h1>
+        <p class="page-description">Visão geral dos cadastros e movimentações da loja.</p>
+    </div>
 </div>
 
 <div class="cards">
-    <div class="card">
+    <a href="{{ url_for('clientes.listar') }}" class="card card-link">
+        <div class="card-icon">CL</div>
         <div class="card-valor">{{ totais.clientes }}</div>
         <div class="card-label">Clientes</div>
-    </div>
-    <div class="card">
-        <div class="card-valor"></div>
+    </a>
+    <a href="{{ url_for('categorias.listar') }}" class="card card-link">
+        <div class="card-icon">CA</div>
+        <div class="card-valor">{{ totais.categorias }}</div>
         <div class="card-label">Categorias</div>
-    </div>
-    <div class="card">
-        <div class="card-valor"></div>
+    </a>
+    <a href="{{ url_for('produtos.listar') }}" class="card card-link">
+        <div class="card-icon">PR</div>
+        <div class="card-valor">{{ totais.produtos }}</div>
         <div class="card-label">Produtos</div>
-    </div>
-    <div class="card">
-        <div class="card-valor"></div>
+    </a>
+    <a href="{{ url_for('vendas.listar') }}" class="card card-link">
+        <div class="card-icon">VE</div>
+        <div class="card-valor">{{ totais.vendas }}</div>
         <div class="card-label">Vendas</div>
-    </div>
+    </a>
 </div>
+
+<section class="quick-actions">
+    <h2>Acesso rápido</h2>
+    <div class="quick-actions-links">
+        <a href="{{ url_for('clientes.novo') }}">Cadastrar cliente <span>→</span></a>
+        <a href="{{ url_for('categorias.nova') }}">Cadastrar categoria <span>→</span></a>
+        <a href="{{ url_for('produtos.novo') }}">Cadastrar produto <span>→</span></a>
+        <a href="{{ url_for('vendas.nova') }}">Registrar venda <span>→</span></a>
+    </div>
+</section>
 {% endblock %}

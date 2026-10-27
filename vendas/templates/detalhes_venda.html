@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Venda #{{ venda.id }} — MiniStore{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Venda #{{ venda.id }}</h1>
+        <p class="page-description">Detalhes e itens registrados nesta venda.</p>
+    </div>
+    <div class="actions">
+        <a href="{{ url_for('vendas.editar', id=venda.id) }}" class="btn btn-primary">Editar venda</a>
+        <a href="{{ url_for('vendas.listar') }}" class="btn btn-secondary">Voltar</a>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <section class="detail-card">
+        <span class="detail-label">Cliente</span>
+        <strong>{{ venda.cliente_nome }}</strong>
+        {% if venda.cliente_email %}<span>{{ venda.cliente_email }}</span>{% endif %}
+        {% if venda.cliente_telefone %}<span>{{ venda.cliente_telefone }}</span>{% endif %}
+    </section>
+    <section class="detail-card">
+        <span class="detail-label">Data da venda</span>
+        <strong>{{ venda.data_venda.strftime('%d/%m/%Y às %H:%M') if venda.data_venda else '—' }}</strong>
+        <span class="detail-label detail-label-spaced">Total da venda</span>
+        <strong class="detail-total">{{ venda.total|brl }}</strong>
+    </section>
+</div>
+
+<h2 class="section-title">Itens da venda</h2>
+<div class="table-container">
+    <table class="table">
+        <thead><tr><th>Código</th><th>Produto</th><th>Quantidade</th><th>Preço unitário</th><th>Subtotal</th></tr></thead>
+        <tbody>
+            {% for item in itens %}
+            <tr>
+                <td>{{ item.produto_codigo }}</td>
+                <td class="cell-emphasis">{{ item.produto_nome }}</td>
+                <td>{{ item.quantidade }}</td>
+                <td>{{ item.preco_unitario|brl }}</td>
+                <td class="price-cell">{{ item.subtotal|brl }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="empty-cell">Esta venda não possui itens.</td></tr>
+            {% endfor %}
+        </tbody>
+        <tfoot><tr><th colspan="4" class="total-label">Total</th><th class="price-cell">{{ venda.total|brl }}</th></tr></tfoot>
+    </table>
+</div>
+{% endblock %}

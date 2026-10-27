@@ -1,47 +1,32 @@
-
 {% extends 'base.html' %}
 
+{% block title %}{{ 'Editar categoria' if categoria else 'Nova categoria' }} — MiniStore{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-    <h2>
-        {{ 'Editar Categoria' if categoria else 'Nova Categoria' }}
-    </h2>
-
-    <form method="POST">
-        <div class="mb-3">
-            <label for="nome" class="form-label">Nome</label>
-
-            <input
-                type="text"
-                class="form-control"
-                id="nome"
-                name="nome"
-                value="{{ categoria.nome if categoria else '' }}"
-                required
-            >
-        </div>
-
-        <div class="mb-3">
-            <label for="descricao" class="form-label">
-                Descrição
-            </label>
-
-            <textarea
-                class="form-control"
-                id="descricao"
-                name="descricao"
-                rows="4"
-            >{{ categoria.descricao if categoria else '' }}</textarea>
-        </div>
-
-        <button type="submit" class="btn btn-success">
-            Salvar
-        </button>
-
-        <a href="{{ url_for('categorias.listar') }}"
-           class="btn btn-secondary">
-            Cancelar
-        </a>
-    </form>
+<div class="page-header">
+    <div>
+        <h1>{{ 'Editar categoria' if categoria else 'Nova categoria' }}</h1>
+        <p class="page-description">Preencha as informações da categoria.</p>
+    </div>
 </div>
+
+<form method="POST" class="form-card">
+    <div class="form-group">
+        <label for="nome">Nome <span class="required">*</span></label>
+        <input type="text" id="nome" name="nome" class="form-control"
+               value="{{ categoria.nome if categoria else '' }}" maxlength="100" required autofocus>
+    </div>
+
+    <div class="form-group">
+        <label for="descricao">Descrição</label>
+        <textarea id="descricao" name="descricao" class="form-control" rows="4"
+                  placeholder="Descreva esta categoria (opcional)">{{ categoria.descricao if categoria and categoria.descricao else '' }}</textarea>
+    </div>
+
+    <p class="form-help"><span class="required">*</span> Campo obrigatório.</p>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ 'Salvar alterações' if categoria else 'Cadastrar categoria' }}</button>
+        <a href="{{ url_for('categorias.listar') }}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
 {% endblock %}

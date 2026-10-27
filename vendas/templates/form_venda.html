@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ 'Editar venda' if venda else 'Nova venda' }} — MiniStore{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>{{ 'Editar venda #' ~ venda.id if venda else 'Nova venda' }}</h1>
+        <p class="page-description">Selecione o cliente e adicione os produtos vendidos.</p>
+    </div>
+</div>
+
+{% if not clientes %}
+<div class="alert alert-warning">Cadastre um cliente antes de registrar uma venda.</div>
+{% elif not produtos %}
+<div class="alert alert-warning">Cadastre um produto antes de registrar uma venda.</div>
+{% else %}
+<form method="POST" class="form-card form-wide" id="form-venda">
+    <div class="form-group form-customer">
+        <label for="id_cliente">Cliente <span class="required">*</span></label>
+        <select id="id_cliente" name="id_cliente" class="form-control" required>
+            <option value="">Selecione um cliente</option>
+            {% for cliente in clientes %}
+            <option value="{{ cliente.id }}" {% if (form_data and form_data.get('id_cliente') == cliente.id|string) or (venda and venda.id_cliente|string == cliente.id|string) %}selected{% endif %}>{{ cliente.nome }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="section-heading">
+        <div>
+            <h2>Produtos da venda</h2>
+            <p>Informe a quantidade de cada produto.</p>
+        </div>
+        <button type="button" id="adicionar-item" class="btn btn-secondary">+ Adicionar produto</button>
+    </div>
+
+    <div class="sale-items-header" aria-hidden="true">
+        <span>Produto</span><span>Quantidade</span><span></span>
+    </div>
+    <div id="itens-venda" class="sale-items">
+        {% if itens_form %}
+            {% for item in itens_form %}
+            <div class="sale-item-row">
+                <select name="produto_id[]" class="form-control produto-select" required aria-label="Produto">
+                    <option value="">Selecione um produto</option>
+                    {% for produto in produtos %}
+                    <option value="{{ produto.id }}" {% if (item.produto_id is defined and item.produto_id|string == produto.id|string) or (item.id_produto is defined and item.id_produto|string == produto.id|string) %}selected{% endif %}>
+                        {{ produto.codigo }} — {{ produto.nome }} ({{ produto.preco|brl }})
+                    </option>
+                    {% endfor %}
+                </select>
+                <input type="number" name="quantidade[]" class="form-control quantidade-input" min="1" step="1"
+                       value="{{ item.quantidade if item.quantidade is defined else 1 }}" required aria-label="Quantidade">
+                <button type="button" class="btn btn-danger btn-small remover-item" aria-label="Remover produto">Remover</button>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="sale-item-row">
+                <select name="produto_id[]" class="form-control produto-select" required aria-label="Produto">
+                    <option value="">Selecione um produto</option>
+                    {% for produto in produtos %}
+                    <option value="{{ produto.id }}">{{ produto.codigo }} — {{ produto.nome }} ({{ produto.preco|brl }})</option>
+                    {% endfor %}
+                </select>
+                <input type="number" name="quantidade[]" class="form-control quantidade-input" min="1" step="1" value="1" required aria-label="Quantidade">
+                <button type="button" class="btn btn-danger btn-small remover-item" aria-label="Remover produto">Remover</button>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="sale-total-note">O total é calculado pelo sistema com base no preço atual dos produtos.</div>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ 'Salvar alterações' if venda else 'Registrar venda' }}</button>
+        <a href="{{ url_for('vendas.detalhes', id=venda.id) if venda else url_for('vendas.listar') }}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+
+<template id="modelo-item-venda">
+    <div class="sale-item-row">
+        <select name="produto_id[]" class="form-control produto-select" required aria-label="Produto">
+            <option value="">Selecione um produto</option>
+            {% for produto in produtos %}
+            <option value="{{ produto.id }}">{{ produto.codigo }} — {{ produto.nome }} ({{ produto.preco|brl }})</option>
+            {% endfor %}
+        </select>
+        <input type="number" name="quantidade[]" class="form-control quantidade-input" min="1" step="1" value="1" required aria-label="Quantidade">
+        <button type="button" class="btn btn-danger btn-small remover-item" aria-label="Remover produto">Remover</button>
+    </div>
+</template>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Produtos — MiniStore{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Produtos</h1>
+        <p class="page-description">Cadastre e mantenha os produtos da loja.</p>
+    </div>
+    <a href="{{ url_for('produtos.novo') }}" class="btn btn-primary">Novo produto</a>
+</div>
+
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Produto</th>
+                <th>Categoria</th>
+                <th>Preço</th>
+                <th class="column-actions">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produto in produtos %}
+            <tr>
+                <td>{{ produto.codigo }}</td>
+                <td>
+                    <span class="cell-emphasis">{{ produto.nome }}</span>
+                    {% if produto.descricao %}<small class="cell-subtitle">{{ produto.descricao }}</small>{% endif %}
+                </td>
+                <td>{{ produto.categoria_nome or 'Sem categoria' }}</td>
+                <td class="price-cell">{{ produto.preco|brl }}</td>
+                <td>
+                    <div class="actions">
+                        <a href="{{ url_for('produtos.editar', id=produto.id) }}" class="btn btn-secondary btn-small">Editar</a>
+                        <form action="{{ url_for('produtos.excluir', id=produto.id) }}" method="POST" class="inline-form"
+                              onsubmit="return confirm('Deseja excluir este produto?');">
+                            <button type="submit" class="btn btn-danger btn-small">Excluir</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="empty-cell"><div class="empty-state"><strong>Nenhum produto cadastrado</strong><span>Cadastre o primeiro produto para começar.</span><a href="{{ url_for('produtos.novo') }}" class="btn btn-primary btn-small">Cadastrar produto</a></div></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

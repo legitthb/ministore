@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Vendas — MiniStore{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Vendas</h1>
+        <p class="page-description">Consulte, registre e acompanhe as vendas.</p>
+    </div>
+    <a href="{{ url_for('vendas.nova') }}" class="btn btn-primary">Nova venda</a>
+</div>
+
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nº</th>
+                <th>Data</th>
+                <th>Cliente</th>
+                <th>Itens</th>
+                <th>Total</th>
+                <th class="column-actions">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venda in vendas %}
+            <tr>
+                <td>#{{ venda.id }}</td>
+                <td>{{ venda.data_venda.strftime('%d/%m/%Y %H:%M') if venda.data_venda else '—' }}</td>
+                <td class="cell-emphasis">{{ venda.cliente_nome }}</td>
+                <td>{{ venda.quantidade_itens }}</td>
+                <td class="price-cell">{{ venda.total|brl }}</td>
+                <td>
+                    <div class="actions">
+                        <a href="{{ url_for('vendas.detalhes', id=venda.id) }}" class="btn btn-secondary btn-small">Detalhes</a>
+                        <a href="{{ url_for('vendas.editar', id=venda.id) }}" class="btn btn-secondary btn-small">Editar</a>
+                        <form action="{{ url_for('vendas.excluir', id=venda.id) }}" method="POST" class="inline-form"
+                              onsubmit="return confirm('Deseja excluir esta venda? Esta ação não pode ser desfeita.');">
+                            <button type="submit" class="btn btn-danger btn-small">Excluir</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="empty-cell"><div class="empty-state"><strong>Nenhuma venda registrada</strong><span>As vendas cadastradas aparecerão nesta lista.</span><a href="{{ url_for('vendas.nova') }}" class="btn btn-primary btn-small">Registrar venda</a></div></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,11 +1,10 @@
-# setup_db.py
+# setup.py
 import mysql.connector
 
 conn = mysql.connector.connect(
     host='localhost',
     user='ministore_user',
-    password='admin',
-    database='ministore'
+    password='admin'
 )
 
 cursor = conn.cursor()

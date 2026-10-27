@@ -1,82 +1,69 @@
 # MiniStore
 
-Sistema web com objetivo didático desenvolvido com Flask + MariaDB.
-
+Sistema web didático de gerenciamento de loja desenvolvido com Flask e MySQL/MariaDB.
 
 ## Pré-requisitos
 
 - Python 3.x
-- MariaDB instalado e rodando
-- Git configurado
+- MySQL ou MariaDB em execução
+- Usuário do banco configurado no arquivo `database.py`
 
 ## Instalação
 
-### 1. Clone o repositório do professor
+1. Crie e ative um ambiente virtual:
 
-```bash
-git clone https://github.com/gutosolar72/ministore.git
-cd ministore
+   ```bash
+   python -m venv venv
+   # Windows: venv\Scripts\activate
+   # Linux/macOS: source venv/bin/activate
+   ```
+
+2. Instale as dependências:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Confira as credenciais de conexão em `database.py` e `setup.py`. O usuário configurado precisa ter permissão para criar tabelas e, na primeira configuração, o banco de dados.
+
+4. Crie as tabelas:
+
+   ```bash
+   python setup.py
+   ```
+
+5. Inicie o sistema:
+
+   ```bash
+   python app.py
+   ```
+
+6. Acesse `http://127.0.0.1:5000`.
+
+## Módulos
+
+| Módulo | Funcionalidades |
+| --- | --- |
+| Dashboard | Totais de clientes, categorias, produtos e vendas e atalhos para cadastros |
+| Clientes | Listagem, cadastro, edição e exclusão |
+| Categorias | Listagem, cadastro, edição e exclusão, com aviso quando a categoria estiver vinculada a produtos |
+| Produtos | Listagem, cadastro, edição e exclusão, com categoria opcional |
+| Vendas | Registro com vários produtos, cálculo automático do total, consulta de detalhes, edição e exclusão |
+
+## Estrutura principal
+
+```text
+ministore-main/
+├── app.py
+├── database.py
+├── setup.py
+├── categorias/
+├── clientes/
+├── dashboard/
+├── produtos/
+├── vendas/
+├── templates/
+└── static/
+    ├── css/style.css
+    └── js/main.js
 ```
-
-### 2. Desvincule do repositório original e conecte ao seu
-
-```bash
-git remote remove origin
-git remote add origin https://github.com/SEU_USUARIO/ministore.git
-git push -u origin main
-```
-
-### 3. Crie e ative o ambiente virtual
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 4. Instale as dependências
-
-```bash
-pip install -r requirements.txt
-```
-
-### 5. Configure o banco de dados
-
-```bash
-python3 setup_db.py
-```
-
-### 6. Execute a aplicação
-
-```bash
-python3 app.py
-```
-
-Acesse em http://127.0.0.1:5000
-
-## Estrutura do projeto
-
-```
-ministore/
-├── app.py              # ponto de entrada da aplicação
-├── database.py         # conexão com o banco de dados
-├── setup_db.py         # script de criação do banco
-├── requirements.txt    # dependências do projeto
-├── static/
-│   ├── css/style.css   # estilos globais
-│   └── js/main.js      # javascript global
-├── dashboard/          # módulo de dashboard (fornecido)
-├── clientes/           # módulo de clientes (fornecido)
-├── categorias/         # módulo a implementar
-├── produtos/           # módulo a implementar
-└── vendas/             # módulo a implementar
-```
-
-## Módulos a implementar
-
-| Módulo | Status |
-|--------|--------|
-| Dashboard | ✅ Pronto |
-| Clientes | ✅ Pronto |
-| Categorias | 🔲 Implementar |
-| Produtos | 🔲 Implementar |
-| Vendas | 🔲 Implementar |
