@@ -85,6 +85,7 @@ def editar(id):
 
     return render_template('form_cliente.html', cliente=cliente)
 
+
 @clientes_bp.route('/clientes/<int:id>/excluir', methods=['POST'])
 def excluir(id):
     conn = None
@@ -94,10 +95,26 @@ def excluir(id):
         cursor = conn.cursor()
         cursor.execute('DELETE FROM clientes WHERE id = %s', (id,))
         conn.commit()
-        flash('Cliente excluído com sucesso!', 'success')
-    except mysql.connector.Error as e:
-        flash(f'Erro ao excluir cliente: {e}', 'danger')
+
+        if cursor.rowcount:
+            flash('Cliente excluído com sucesso!', 'success')
+        else:
+            flash('Cliente não encontrado.', 'warning')
+
+    except mysql.connector.IntegrityError:
+        if conn and conn.is_connected():
+            conn.rollback()
+        flash('Este cliente não pode ser excluído porque possui vendas registradas.', 'warning')
+
+    except mysql.connector.Error:
+        if conn and conn.is_connected():
+            conn.rollback()
+        flash('Não foi possível excluir o cliente. Tente novamente.', 'danger')
+
     finally:
-        if cursor: cursor.close()
-        if conn: conn.close()
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
     return redirect(url_for('clientes.listar'))
