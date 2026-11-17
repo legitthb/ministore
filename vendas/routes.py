@@ -150,19 +150,19 @@ def nova():
                 flash(str(e), 'warning')
                 form_data = request.form
                 return render_template(
-                    'form_venda.html', venda=None, itens_form=_itens_do_formulario(form_data),
+                    'form_venda.html', itens_form=_itens_do_formulario(form_data),
                     clientes=clientes, produtos=produtos, form_data=form_data,
                 )
             except mysql.connector.Error:
                 conn.rollback()
                 flash('Não foi possível registrar a venda. Confira os dados e tente novamente.', 'danger')
-                return render_template('form_venda.html', venda=None, itens_form=[], clientes=clientes, produtos=produtos, form_data=request.form)
+                return render_template('form_venda.html', itens_form=[], clientes=clientes, produtos=produtos, form_data=request.form)
 
         if not clientes:
             flash('Cadastre pelo menos um cliente antes de registrar uma venda.', 'warning')
         if not produtos:
             flash('Cadastre pelo menos um produto antes de registrar uma venda.', 'warning')
-        return render_template('form_venda.html', venda=None, itens_form=[], clientes=clientes, produtos=produtos, form_data={})
+        return render_template('form_venda.html', itens_form=[], clientes=clientes, produtos=produtos, form_data={})
     except mysql.connector.Error:
         flash('Não foi possível abrir o formulário de venda.', 'danger')
         return redirect(url_for('vendas.listar'))
@@ -211,83 +211,3 @@ def detalhes(id):
             cursor.close()
         if conn and conn.is_connected():
             conn.close()
-
-
-@vendas_bp.route('/vendas/<int:id>/editar', methods=['GET', 'POST'])
-def editar(id):
-    conn = None
-    cursor = None
-    try:
-        conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute('SELECT id, id_cliente, data_venda, total FROM vendas WHERE id = %s', (id,))
-        venda = cursor.fetchone()
-        if not venda:
-            flash('Venda não encontrada.', 'warning')
-            return redirect(url_for('vendas.listar'))
-
-        cursor.execute('''
-            SELECT id_produto, quantidade FROM itens_venda
-            WHERE id_venda = %s ORDER BY id
-        ''', (id,))
-        itens_existentes = cursor.fetchall()
-        clientes, produtos = _buscar_opcoes(cursor)
-
-        if request.method == 'POST':
-            try:
-                id_cliente, itens, total = _ler_dados_venda(cursor, request.form)
-                cursor.execute('UPDATE vendas SET id_cliente = %s, total = %s WHERE id = %s', (id_cliente, total, id))
-                cursor.execute('DELETE FROM itens_venda WHERE id_venda = %s', (id,))
-                _gravar_itens(cursor, id, itens)
-                conn.commit()
-                flash('Venda atualizada com sucesso!', 'success')
-                return redirect(url_for('vendas.detalhes', id=id))
-            except ValueError as e:
-                conn.rollback()
-                flash(str(e), 'warning')
-                itens_form = _itens_do_formulario(request.form)
-                venda['id_cliente'] = request.form.get('id_cliente', venda['id_cliente'])
-                return render_template('form_venda.html', venda=venda, itens_form=itens_form, clientes=clientes, produtos=produtos, form_data=request.form)
-            except mysql.connector.Error:
-                conn.rollback()
-                flash('Não foi possível atualizar a venda. Confira os dados e tente novamente.', 'danger')
-                return render_template('form_venda.html', venda=venda, itens_form=itens_existentes, clientes=clientes, produtos=produtos, form_data={})
-
-        return render_template('form_venda.html', venda=venda, itens_form=itens_existentes, clientes=clientes, produtos=produtos, form_data={})
-    except mysql.connector.Error:
-        if conn and conn.is_connected():
-            conn.rollback()
-        flash('Não foi possível carregar a venda para edição.', 'danger')
-        return redirect(url_for('vendas.listar'))
-    finally:
-        if cursor:
-            cursor.close()
-        if conn and conn.is_connected():
-            conn.close()
-
-
-@vendas_bp.route('/vendas/<int:id>/excluir', methods=['POST'])
-def excluir(id):
-    conn = None
-    cursor = None
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute('SELECT id FROM vendas WHERE id = %s', (id,))
-        if not cursor.fetchone():
-            flash('Venda não encontrada.', 'warning')
-            return redirect(url_for('vendas.listar'))
-        cursor.execute('DELETE FROM itens_venda WHERE id_venda = %s', (id,))
-        cursor.execute('DELETE FROM vendas WHERE id = %s', (id,))
-        conn.commit()
-        flash('Venda excluída com sucesso!', 'success')
-    except mysql.connector.Error:
-        if conn and conn.is_connected():
-            conn.rollback()
-        flash('Não foi possível excluir a venda.', 'danger')
-    finally:
-        if cursor:
-            cursor.close()
-        if conn and conn.is_connected():
-            conn.close()
-    return redirect(url_for('vendas.listar'))

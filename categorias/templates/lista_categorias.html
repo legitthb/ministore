@@ -4,51 +4,39 @@
 
 {% block content %}
 <div class="page-header">
-    <div>
-        <h1>Categorias</h1>
-        <p class="page-description">Organize os produtos por tipo.</p>
-    </div>
-    <a href="{{ url_for('categorias.nova') }}" class="btn btn-primary">Nova categoria</a>
+    <h1>Categorias</h1>
+    <a href="{{ url_for('categorias.nova') }}" class="btn btn-primary">Nova Categoria</a>
 </div>
 
-<div class="table-container">
-    <table class="table">
-        <thead>
-            <tr>
-                <th class="column-id">#</th>
-                <th>Nome</th>
-                <th>Descrição</th>
-                <th class="column-actions">Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for categoria in categorias %}
-            <tr>
-                <td>{{ categoria.id }}</td>
-                <td class="cell-emphasis">{{ categoria.nome }}</td>
-                <td>{{ categoria.descricao or '—' }}</td>
-                <td>
-                    <div class="actions">
-                        <a href="{{ url_for('categorias.editar', id=categoria.id) }}" class="btn btn-secondary btn-small">Editar</a>
-                        <form action="{{ url_for('categorias.excluir', id=categoria.id) }}" method="POST" class="inline-form"
-                              onsubmit="return confirm('Deseja excluir esta categoria?');">
-                            <button type="submit" class="btn btn-danger btn-small">Excluir</button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="4" class="empty-cell">
-                    <div class="empty-state">
-                        <strong>Nenhuma categoria cadastrada</strong>
-                        <span>Cadastre uma categoria para organizar seus produtos.</span>
-                        <a href="{{ url_for('categorias.nova') }}" class="btn btn-primary btn-small">Cadastrar categoria</a>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+{% if categorias %}
+<p>{{ categorias|length }} categoria(s) cadastrada(s).</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Nome</th>
+            <th>Descrição</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for categoria in categorias %}
+        <tr>
+            <td>{{ categoria.id }}</td>
+            <td>{{ categoria.nome }}</td>
+            <td>{{ categoria.descricao or '-' }}</td>
+            <td>
+                <a href="{{ url_for('categorias.editar', id=categoria.id) }}" class="btn btn-secondary">Editar</a>
+                <form action="{{ url_for('categorias.excluir', id=categoria.id) }}" method="POST" style="display:inline"
+                      onsubmit="return confirm('Deseja excluir esta categoria?')">
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Nenhuma categoria cadastrada.</p>
+{% endif %}
 {% endblock %}
